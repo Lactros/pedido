@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Você ❤️</title>
+    <style>
+        :root {
+            --bg: #0f0d15;
+            --card: #171424;
+            --accent: #ff6ea5;
+            --accent2: #9b8cff;
+            --text: #f7f7fb;
+            --muted: #bfbfd6;
+            --success: #9ef7c1;
+            --danger: #ff6b6b;
+            --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+            --radius: 22px;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0
+        }
+
+        body {
+            font-family: Poppins, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+            color: var(--text);
+            background: radial-gradient(1200px 600px at 80% -10%, #221b3a 0%, transparent 60%),
+                radial-gradient(900px 500px at 10% -10%, #331b3a 0%, transparent 60%),
+                var(--bg);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* bg hearts */
+        .hearts {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            opacity: .25
+        }
+
+        .heart {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            transform: rotate(45deg);
+            animation: rise 12s linear infinite
+        }
+
+        .heart:before,
+        .heart:after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent)
+        }
+
+        .heart:before {
+            left: -8px
+        }
+
+        .heart:after {
+            top: -8px
+        }
+
+        @keyframes rise {
+            from {
+                transform: translateY(40vh) rotate(45deg) scale(.6)
+            }
+
+            to {
+                transform: translateY(-120vh) rotate(45deg) scale(1.2)
+            }
+        }
+
+        /* sections */
+        .page {
+            min-height: 100svh;
+            display: grid;
+            place-items: center;
+            padding: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            background: linear-gradient(140deg, rgba(255, 110, 165, .12), rgba(155, 140, 255, .12));
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px;
+            max-width: 980px;
+            width: 100%
+        }
+
+        .title {
+            font-size: clamp(28px, 5vw, 48px);
+            line-height: 1.1;
+            margin: 0 0 8px;
+            font-weight: 700;
+            letter-spacing: .3px
+        }
+
+        .subtitle {
+            margin: 0 0 24px;
+            color: var(--muted)
+        }
+
+        .btn {
+            text-decoration: none;
+            appearance: none;
+            border: 0;
+            border-radius: 18px;
+            padding: 14px 20px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 18px rgba(255, 110, 165, .23);
+            transition: transform .12s ease, box-shadow .12s ease
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 22px rgba(255, 110, 165, .28)
+        }
+
+        .btn.secondary {
+            background: #292543;
+            box-shadow: none;
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, .08)
+        }
+
+        .stack {
+            display: flex;
+            flex-direction: column;
+            gap: 14px
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px
+        }
+
+        .progress {
+            height: 6px;
+            background: #1b1830;
+            border-radius: 999px;
+            overflow: hidden;
+            margin: 10px 0 0
+        }
+
+        .progress>i {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            transition: width .5s ease
+        }
+
+        /* photos */
+        .gallery {
+            position: relative;
+            aspect-ratio: 9/16;
+            background: #0c0a16;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, .06);
+            height: auto;
+            max-height: 80vh;
+            margin: 0 auto;
+        }
+
+        .slides {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity .6s ease;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            filter: contrast(1.05) saturate(1.05);
+        }
+
+        .caption {
+            position: absolute;
+            left: 12px;
+            bottom: 12px;
+            background: rgba(0, 0, 0, .35);
+            backdrop-filter: blur(4px);
+            padding: 8px 12px;
+            border-radius: 14px;
+            font-size: .95rem;
+        }
+
+        .pills {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+
+        .pill {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .25);
+            cursor: pointer;
+        }
+
+        .pill.active {
+            background: #fff;
+        }
+
+        .navs {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .navs button {
+            background: rgba(0, 0, 0, .25);
+            border: 1px solid rgba(255, 255, 255, .12);
+            backdrop-filter: blur(4px);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: white;
+            font-size: 1.5rem;
+            line-height: 1;
+            transition: background 0.2s;
+        }
+
+        .navs button:hover {
+            background: rgba(0, 0, 0, .5);
+        }
+
+        /* photos end */
+
+
+        /* choice */
+        .choices {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px
+        }
+
+        .choice {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .choice.btn.secondary {
+            position: relative;
+        }
+
+        /* 'não' animation */
+        .btn-yes:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-no {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* modais */
+        dialog {
+            border: 0;
+            border-radius: 22px;
+            background: var(--card);
+            color: var(--text);
+            box-shadow: var(--shadow);
+            max-width: min(720px, 90vw)
+        }
+
+        dialog::backdrop {
+            background: rgba(0, 0, 0, .55)
+        }
+
+        .modal-body {
+            padding: 22px
+        }
+
+        /* footer */
+        footer {
+            opacity: .6;
+            text-align: center;
+            padding: 28px;
+            font-size: .9rem
+        }
+
+        /* fireworks */
+        #fireworks-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        /* responsive */
+        @media (max-width:520px) {
+            .row {
+                flex-direction: column
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hearts" aria-hidden="true"></div>
+
+    <canvas id="fireworks-canvas"></canvas>
+
+    <section id="inicio" class="page" aria-labelledby="h-inicio">
+        <div class="card">
+            <h1 id="h-inicio" class="title">Oi <span id="nome"></span> 💕</h1>
+            <p class="subtitle">Fiz esse lugarzinho com carinho pra você com uma perguntinha especial no final. 😊</p>
+            <div class="stack">
+                <div class="row">
+                    <button class="btn" id="entrar">Seguir</button>
+                    <a href="#pergunta" class="btn secondary">Ir direto para a pergunta</a>
+                </div>
+                <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="memorias" class="page" aria-labelledby="h-memorias">
+        <div class="card">
+            <div id="photo-prompt">
+                <h2 class="title">Já viu como você é linda?</h2>
+                <p class="subtitle">Eu amo seu jeitinho carinhoso e gostoso de falar, mas também você precisa admitir que é maravilhosa, não é? Da uma olhadinha...</p>
+                <div class="row">
+                    <button class="btn" id="showPhotosBtn">Ver ➜</button>
+                </div>
+            </div>
+
+            <div id="photo-carousel-container" style="display:none;">
+                <h2 id="h-memorias" class="title">Que gatinha fui conhecer em...</h2>
+                <p class="subtitle">Todas as fotos me deixam bobinho, seu sorriso é encantador, no off eu fico apaixonado pela sua beleza também, mas coloquei algumas fotinhas que você me mandou.</p>
+                <div class="gallery">
+                    <div class="slides" id="carousel-slides">
+                    </div>
+                    <div class="navs">
+                        <button id="prev" aria-label="Foto anterior">‹</button>
+                        <button id="next" aria-label="Próxima foto">›</button>
+                    </div>
+                    <div class="pills" id="pills"></div>
+                </div>
+                <div class="row" style="justify-content:flex-end;margin-top:14px">
+                    <a href="#declaracao" class="btn">Seguir ➜</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="declaracao" class="page" aria-labelledby="h-declaracao">
+        <div class="card">
+            <h2 id="h-declaracao" class="title">Sobre o que sinto...</h2>
+            <p class="subtitle">
+                Começamos a conversar faz pouco tempo mas nossa conversa cresceu de maneira exponencial muito rápido e eu até me assustei um pouco com isso no começo mas depois fui percebendo e conhecendo a pessoa incrível que você é, e não me arrependo nenhum pouco, quero continuar te conhecendo mais e mais, não pensava que ia me apaixonar cedo assim e nem nessa intensidade mas estou amando isso e quero levar pra frente, aos poucos construindo nosso futuro e se tudo der certo ficarmos juntinhos, eu quero muito sua felicidade e não quero deixar você sozinha, quero cuidar de você, te fazer sorrir, quando estiver triste te ajudar e estar ao seu lado sempre, garantir que você pode contar comigo pro que precisar, poder te acompanhar e te apoiar nas suas decisões e estar principalmente presente nessa relação, eu te amo muito e quero começar a contar nossos dias juntos, quebrando barreiras e estabelecendo metas, eu e você... juntos nessa jornada, ainda não sei me expressar muito bem mas eu quero demonstrar com ações o quanto eu te amo e te quero Marina.
+            </p>
+            <div class="row" style="justify-content:flex-end;margin-top:14px">
+                <a href="#pergunta" class="btn">Final ➜</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="pergunta" class="page" aria-labelledby="h-pergunta">
+        <div class="card">
+            <h2 id="h-pergunta" class="title">Marina, aceita namorar comigo? ❤️</h2>
+            <p class="subtitle" id="texto-pergunta"></p>
+            <div class="choices">
+                <button class="btn choice btn-yes" id="sim">Sim</button>
+                <button class="btn secondary choice btn-no" id="nao">Não</button>
+            </div>
+        </div>
+    </section>
+
+    <dialog id="modal-sim">
+        <div class="modal-body">
+            <h3 class="title" style="font-size:clamp(22px,4vw,36px)">Você disse que siiimmmmmm🥹💞</h3>
+            <p class="subtitle">Amor eu quero muito te fazer feliz nesse caminho e nunca te deixar sentir ou estar sozinha em nenhum momento. Eu te amo muuuuuito! ❤️😍</p>
+            <div class="row">
+                <button class="btn" id="fechar-sim">Fechar</button>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog id="modal-nao">
+        <div class="modal-body">
+            <h3 class="title" style="font-size:clamp(22px,4vw,34px)">Tudo bem…</h3>
+            <p class="subtitle">Eu vou te admirar por tudo que tem feito comigo até aqui e lembrar de você por um loooooongo tempo, você conseguiu mudar muita coisa e deixou minha vida bem melhor, estarei aqui sempre que precisar.</p>
+            <div class="row">
+                <button class="btn secondary" id="fechar-nao">Fechar</button>
+            </div>
+        </div>
+    </dialog>
+
+    <footer>Feito com carinho por <span id="autor"></span> • <span id="ano"></span></footer>
+
+    <script>
+        // easy cfg edit //
+        const CONFIG = {
+            ela: "Marina", // Marina
+            eu: "Milton", // footer
+            perguntaTexto: "",
+            // caminho de fotos
+            fotos: [
+                { src: "images/mor0.jpg", legenda: "Sorrisinho leve..." },
+                { src: "images/mor1.jpg", legenda: "Gatona do cabelo lindo..." },
+                { src: "images/mor2.jpg", legenda: "Juba que deixam meus olhos brilhando..." },
+                { src: "images/juntinho0.jpg", legenda: "Callzinha de vídeo ficou fácil..." }
+            ]
+        };
+
+        // field text //
+        document.getElementById('nome').textContent = CONFIG.ela;
+        document.getElementById('autor').textContent = CONFIG.eu;
+        document.getElementById('ano').textContent = new Date().getFullYear();
+        document.getElementById('texto-pergunta').textContent = CONFIG.perguntaTexto;
+
+        // bg hearts working //
+        (function hearts() {
+            const wrap = document.querySelector('.hearts');
+            const n = 20;
+            for (let i = 0; i < n; i++) {
+                const h = document.createElement('div');
+                h.className = 'heart';
+                h.style.left = (Math.random() * 100) + '%';
+                h.style.animationDelay = (Math.random() * 8) + 's';
+                h.style.animationDuration = (10 + Math.random() * 8) + 's';
+                h.style.background = `linear-gradient(90deg, var(--accent), var(--accent2))`;
+                wrap.appendChild(h);
+            }
+        })();
+
+        // transition/nav //
+        const progress = document.getElementById('bar');
+        const entrarBtn = document.getElementById('entrar');
+        const showPhotosBtn = document.getElementById('showPhotosBtn');
+        const photoPrompt = document.getElementById('photo-prompt');
+        const photoCarouselContainer = document.getElementById('photo-carousel-container');
+
+        entrarBtn.addEventListener('click', () => {
+            progress.style.width = "25%";
+            document.getElementById('memorias').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // photo event
+        showPhotosBtn.addEventListener('click', () => {
+            photoPrompt.style.display = 'none';
+            photoCarouselContainer.style.display = 'block';
+            progress.style.width = "50%";
+            setupCarousel();
+        });
+
+
+        // progress bar
+        window.addEventListener('scroll', () => {
+            const sections = ['inicio', 'memorias', 'declaracao', 'pergunta'];
+            let currentSection = sections[0];
+
+            for (const sectionId of sections) {
+                const section = document.getElementById(sectionId);
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 100 && rect.bottom >= 100) {
+                    currentSection = sectionId;
+                    break;
+                }
+            }
+
+            if (currentSection === 'memorias') {
+                progress.style.width = "25%";
+            } else if (currentSection === 'declaracao') {
+                progress.style.width = "75%";
+            } else if (currentSection === 'pergunta') {
+                progress.style.width = "100%";
+            } else {
+                progress.style.width = "0%";
+            }
+        });
+
+        // photos start //
+        const slidesContainer = document.getElementById('carousel-slides');
+        const pills = document.getElementById('pills');
+        const nextBtn = document.getElementById('next');
+        const prevBtn = document.getElementById('prev');
+
+        let idx = 0;
+        let timer;
+
+        function setupCarousel() {
+            // render
+            slidesContainer.innerHTML = '';
+            pills.innerHTML = '';
+            CONFIG.fotos.forEach((f, i) => {
+                const s = document.createElement('div');
+                s.className = 'slide' + (i === 0 ? ' active' : '');
+                s.innerHTML = `<img src="${f.src}" alt="${f.legenda}"><div class="caption">${f.legenda || ''}</div>`;
+                slidesContainer.appendChild(s);
+
+                const p = document.createElement('div');
+                p.className = 'pill' + (i === 0 ? ' active' : '');
+                p.addEventListener('click', () => { goTo(i); stopAuto(); });
+                pills.appendChild(p);
+            });
+            startAuto();
+        }
+
+        function goTo(i) {
+            idx = (i + CONFIG.fotos.length) % CONFIG.fotos.length;
+            const slides = slidesContainer.querySelectorAll('.slide');
+            const dots = pills.querySelectorAll('.pill');
+            slides.forEach((el, k) => el.classList.toggle('active', k === idx));
+            dots.forEach((el, k) => el.classList.toggle('active', k === idx));
+        }
+
+        function next() {
+            goTo(idx + 1);
+        }
+        function prev() {
+            goTo(idx - 1);
+        }
+
+        function startAuto() {
+            stopAuto();
+            timer = setInterval(next, 6000);
+        }
+        function stopAuto() {
+            if (timer) clearInterval(timer);
+        }
+
+        nextBtn.addEventListener('click', () => { next(); startAuto(); });
+        prevBtn.addEventListener('click', () => { prev(); startAuto(); });
+
+
+        // btn e modal //
+        const modalSim = document.getElementById('modal-sim');
+        const modalNao = document.getElementById('modal-nao');
+        const yesBtn = document.getElementById('sim');
+        const noBtn = document.getElementById('nao');
+
+        // sim
+        yesBtn.addEventListener('click', () => {
+            modalSim.showModal();
+            startFireworks();
+        });
+
+        // não
+        noBtn.addEventListener('mouseover', () => {
+            const x = Math.random() * 1100 - 500;
+            const y = Math.random() * 1100 - 500;
+            noBtn.style.transform = `translate(${x}px, ${y}px)`;
+        });
+
+        noBtn.addEventListener('mouseout', () => {
+            noBtn.style.transform = 'translate(0, 0)';
+        });
+
+        noBtn.addEventListener('click', () => {
+            modalNao.showModal();
+        });
+
+        document.getElementById('fechar-sim').addEventListener('click', () => modalSim.close());
+        document.getElementById('fechar-nao').addEventListener('click', () => modalNao.close());
+
+        // fireworks code //
+        const canvas = document.getElementById('fireworks-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let running = false;
+        let timerId = null;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function createParticle(x, y, color) {
+            return {
+                x: x,
+                y: y,
+                vx: (Math.random() - 0.5) * 5,
+                vy: (Math.random() - 0.5) * 5,
+                alpha: 1,
+                color: color,
+                size: Math.random() * 3 + 1
+            };
+        }
+
+        function updateParticles() {
+            particles = particles.filter(p => p.alpha > 0.05);
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.05; // gravidade
+                p.alpha *= 0.96; // fade out
+            }
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function createFireworks() {
+            if (!running) return;
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height * 0.5;
+            const colors = ['#ff6ea5', '#9b8cff', '#fff', '#9ef7c1', '#ffc125'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const numParticles = Math.random() * 100 + 50;
+            for (let i = 0; i < numParticles; i++) {
+                particles.push(createParticle(x, y, color));
+            }
+        }
+
+        function animateFireworks() {
+            if (!running) return;
+            updateParticles();
+            drawParticles();
+            requestAnimationFrame(animateFireworks);
+        }
+
+        function startFireworks() {
+            if (running) return;
+            running = true;
+            canvas.style.display = 'block'; // show canvas
+            particles = [];
+            animateFireworks();
+            timerId = setInterval(createFireworks, 500); // 0.5s fireworks
+            setTimeout(stopFireworks, 7000); // 7s = stop
+        }
+
+        function stopFireworks() {
+            running = fa
+            if (timerId) clearInterval(timerId);
+            setTimeout(() => {
+                canvas.style.display = 'none'; // hide canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }, 500);
+        }
+    </script>
+</body>
+
+</html>
